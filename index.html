@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الإيجار العقاري - نسخة مبسطة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .input-section, .results-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4facfe;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4facfe;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .result-value.positive {
+            color: #28a745;
+        }
+
+        .result-value.negative {
+            color: #dc3545;
+        }
+
+        .slider-container {
+            margin: 20px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4facfe;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4facfe;
+            cursor: pointer;
+            border: none;
+        }
+
+        .cash-flow-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .cash-flow-table th,
+        .cash-flow-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cash-flow-table th {
+            background: #4facfe;
+            color: white;
+            font-weight: 600;
+        }
+
+        .cash-flow-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+
+        .arabic-number {
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ حاسبة الإيجار العقاري</h1>
+            <p>تحليل التدفقات النقدية لتحديد أعلى قيمة إيجار مع ضمان الربحية</p>
+        </div>
+
+        <div class="main-content">
+            <!-- قسم المدخلات -->
+            <div class="input-section">
+                <h2 class="section-title">📊 المدخلات الأساسية</h2>
+                
+                <div class="input-group">
+                    <label for="contractDuration">مدة العقد (سنوات)</label>
+                    <input type="number" id="contractDuration" value="20" min="1" max="50">
+                </div>
+
+                <div class="input-group">
+                    <label for="gracePeriod">فترة السماح (سنوات)</label>
+                    <input type="number" id="gracePeriod" value="2" min="0" max="10">
+                </div>
+
+                <div class="input-group">
+                    <label for="rentIncreaseInterval">فترة الزيادة الإيجارية (سنوات)</label>
+                    <input type="number" id="rentIncreaseInterval" value="5" min="1" max="10">
+                </div>
+
+                <div class="input-group">
+                    <label for="rentIncreaseRate">نسبة الزيادة الإيجارية (%)</label>
+                    <input type="number" id="rentIncreaseRate" value="10" min="0" max="50">
+                </div>
+
+                <div class="input-group">
+                    <label for="capitalizationRate">معدل الرسملة (%)</label>
+                    <input type="number" id="capitalizationRate" value="7" min="1" max="20" step="0.1">
+                </div>
+
+                <div class="input-group">
+                    <label for="landArea">مساحة الأرض (م²)</label>
+                    <input type="number" id="landArea" value="10000" min="100">
+                </div>
+
+                <div class="input-group">
+                    <label for="buildingFactor">معامل البناء</label>
+                    <input type="number" id="buildingFactor" value="2.5" min="0.1" step="0.1">
+                </div>
+
+                <div class="input-group">
+                    <label for="constructionCost">تكلفة البناء (ريال/م²)</label>
+                    <input type="number" id="constructionCost" value="2000" min="500">
+                </div>
+
+                <div class="input-group">
+                    <label for="totalDevelopmentCost">إجمالي تكاليف التطوير (ريال)</label>
+                    <input type="number" id="totalDevelopmentCost" value="93480000" min="1000000">
+                </div>
+
+                <button class="calculate-btn" onclick="calculateOptimalRent()">
+                    🧮 حساب النتائج
+                </button>
+            </div>
+
+            <!-- قسم النتائج -->
+            <div class="results-section">
+                <h2 class="section-title">📈 النتائج والتحليل</h2>
+                
+                <div class="result-card">
+                    <div class="result-label">الإيجار السنوي الأمثل</div>
+                    <div class="result-value positive arabic-number" id="optimalRent">٠ ريال</div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-label">صافي القيمة الحالية</div>
+                    <div class="result-value arabic-number" id="npvValue">٠ ريال</div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-label">فترة الاسترداد</div>
+                    <div class="result-value arabic-number" id="paybackPeriod">٠ سنة</div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-label">معدل العائد السنوي</div>
+                    <div class="result-value arabic-number" id="annualReturn">٠.٠%</div>
+                </div>
+
+                <!-- مزلاج تفاعلي لقيمة التأجير -->
+                <div class="slider-container">
+                    <label for="rentSlider">قيمة التأجير التفاعلية (ريال)</label>
+                    <input type="range" id="rentSlider" class="slider" min="0" max="10000000" step="100000" value="0" oninput="updateRentValue()">
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                        <span class="arabic-number">٠</span>
+                        <span class="arabic-number" id="currentRentValue">٠</span>
+                        <span class="arabic-number" id="maxRentValue">١٠,٠٠٠,٠٠٠</span>
+                    </div>
+                    <div class="result-card" style="margin-top: 15px;">
+                        <div class="result-label">صافي القيمة الحالية للقيمة المختارة</div>
+                        <div class="result-value arabic-number" id="interactiveNPV">٠ ريال</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول التدفقات النقدية -->
+        <div style="padding: 30px;">
+            <h2 class="section-title">💰 جدول التدفقات النقدية</h2>
+            <div style="overflow-x: auto;">
+                <table class="cash-flow-table" id="cashFlowTable">
+                    <thead>
+                        <tr>
+                            <th>السنة</th>
+                            <th>الإيجار السنوي</th>
+                            <th>التدفق المخصوم</th>
+                            <th>التدفق التراكمي</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cashFlowBody">
+                        <!-- سيتم ملؤها بواسطة JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="calculator.js"></script>
+</body>
+</html>
+
